@@ -26,7 +26,6 @@ class NotesFragment : Fragment() {
 
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
-    private var notes: MutableList<Note> = mutableListOf()
     private lateinit var adapterNote: CustomAdapter
     lateinit var viewModel: NoteViewModel
 
@@ -49,7 +48,7 @@ class NotesFragment : Fragment() {
                 Toast.makeText(requireContext(),"Заметка пустая",Toast.LENGTH_SHORT).show()
             } else {
                 val date = java.util.Date().toString()
-                val note = Note(notes.size + 1,noteText,date)
+                val note = Note(viewModel.noteList.size + 1,noteText,date)
                 viewModel.noteList.add(note)
                 adapterNote.notifyDataSetChanged()
                 binding.mainNoteEditText.text.clear()
@@ -68,6 +67,7 @@ class NotesFragment : Fragment() {
 
                     val index = search(viewModel.noteList,note)
                     swap(viewModel.noteList,index,newNote)
+                    adapterNote.notifyDataSetChanged()
                 }
                 dialog.setNegativeButton("Отмена") { _, _ -> }
                 dialog.create().show()
@@ -86,7 +86,7 @@ class NotesFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
-                notes.removeAt(viewHolder.adapterPosition)
+                viewModel.noteList.removeAt(viewHolder.adapterPosition)
                 adapterNote.notifyItemRemoved(viewHolder.adapterPosition)
 
             }
