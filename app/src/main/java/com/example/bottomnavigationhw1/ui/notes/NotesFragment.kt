@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,7 @@ import com.example.bottomnavigationhw1.R
 import com.example.bottomnavigationhw1.databinding.FragmentNotesBinding
 import com.example.bottomnavigationhw1.models.CustomAdapter
 import com.example.bottomnavigationhw1.models.Note
+import com.example.bottomnavigationhw1.ui.profile.PersonViewModel
 import java.sql.Date
 
 
@@ -24,7 +27,8 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private var notes: MutableList<Note> = mutableListOf()
-    val adapter = CustomAdapter(notes)
+    private lateinit var adapterNote: CustomAdapter
+    lateinit var viewModel: NoteViewModel
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -34,8 +38,10 @@ class NotesFragment : Fragment() {
 
         _binding = FragmentNotesBinding.inflate(inflater,container,false)
 
+        viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         binding.recyclerViewNoteFragment.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewNoteFragment.adapter = adapter
+        adapterNote = CustomAdapter(viewModel.noteList)
+        binding.recyclerViewNoteFragment.adapter = adapterNote
 
         binding.saveNoteButtonBTN.setOnClickListener {
             val noteText = binding.mainNoteEditText.text.toString()
@@ -44,32 +50,24 @@ class NotesFragment : Fragment() {
             } else {
                 val date = java.util.Date().toString()
                 val note = Note(notes.size + 1,noteText,date)
-                notes.add(note)
-                adapter.notifyDataSetChanged()
+                viewModel.noteList.add(note)
+                adapterNote.notifyDataSetChanged()
+                binding.mainNoteEditText.text.clear()
             }
         }
 
-        adapter.setOnNoteClickListener(object: CustomAdapter.OnNoteClickListener {
+        adapterNote.setOnNoteClickListener(object: CustomAdapter.OnNoteClickListener {
             override fun onNoteClick(note: Note, position: Int) {
 
-                val dialog = AlertDialog.Builder(requireContext())
-                val inflater = requireActivity().layoutInflater
-                val dialogView = inflater.inflate(R.layout.update_note, null)
-                dialog.setView(dialogView)
-                val editName: EditText = dialogView.findViewById(R.id.updateNoteText)
-
-                dialog.setTitle("Обновить запись")
-                dialog.setMessage("Введите данные ниже")
+                val (dialog, editName: android.widget.EditText) = dialogInit()
                 dialog.setPositiveButton("Обновить") { _, _ ->
 
-                    val newNoteText = binding.mainNoteEditText.text.toString()
+                    val newName = editName.text.toString()
                     val newDate = java.util.Date().toString()
-                    val newNote = Note(notes[position].id,newNoteText, newDate)
+                    val newNote = Note(viewModel.noteList[position].id,newName,newDate)
 
-                    val index = search(notes, note)
-                    swap(notes, index, newNote)
-
-
+                    val index = search(viewModel.noteList,note)
+                    swap(viewModel.noteList,index,newNote)
                 }
                 dialog.setNegativeButton("Отмена") { _, _ -> }
                 dialog.create().show()
@@ -89,7 +87,7 @@ class NotesFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
                 notes.removeAt(viewHolder.adapterPosition)
-                adapter.notifyItemRemoved(viewHolder.adapterPosition)
+                adapterNote.notifyItemRemoved(viewHolder.adapterPosition)
 
             }
 
@@ -98,17 +96,17 @@ class NotesFragment : Fragment() {
         return binding.root
         }
 
-    private fun swap(articles: MutableList<Note>, index: Int, newNote: Note){
-        articles.add(index + 1, newNote)
-        articles.removeAt(index)
-    }
 
-    private fun search(articles: MutableList<Note>, oldNote: Note): Int {
-        var result = -1
-        for (i in articles.indices) {
-            if ( oldNote.id == notes[i].id ) result = i
-        }
-        return result
+    private fun dialogInit(): Pair<AlertDialog.Builder, EditText> {
+        val dialog = AlertDialog.Builder(requireContext())
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.update_note, null)
+        dialog.setView(dialogView)
+        val editName: EditText = dialogView.findViewById(R.id.updateNoteText)
+
+        dialog.setTitle("Обновить запись")
+        dialog.setMessage("Введите данные ниже")
+        return Pair(dialog, editName)
     }
 
     override fun onDestroyView() {
@@ -121,6 +119,19 @@ class NotesFragment : Fragment() {
         super.onResume()
 
 
+    }
+
+    private fun swap(articles: MutableList<Note>, index: Int, newArticle: Note){
+        articles.add(index + 1, newArticle)
+        articles.removeAt(index)
+    }
+
+    private fun search(articles: MutableList<Note>, oldArticle: Note): Int {
+        var result = -1
+        for (i in articles.indices) {
+            if ( oldArticle.id == articles[i].id ) result = i
+        }
+        return result
     }
 
 

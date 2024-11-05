@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.bottomnavigationhw1.R
 import com.example.bottomnavigationhw1.databinding.FragmentWeatherBinding
 import com.example.bottomnavigationhw1.ui.weather.currentWeather.utils.RetrofitInstance
@@ -72,9 +73,7 @@ class WeatherFragment : Fragment() {
         }
 
         permissionLauncherInternet.launch(Manifest.permission.INTERNET)
-
         getLocation()
-        getCurrentWeather()
 
     }
 
@@ -97,6 +96,7 @@ class WeatherFragment : Fragment() {
                         cityCoordinate = list?.get(0)?.locality.toString()
                         binding.currentLocal.text = "Текущее местоположение: г. ${cityCoordinate}"
                         Log.d("@@@", "City ${cityCoordinate}")
+                        getCurrentWeather()
                     }
                 }
             } else {
@@ -167,7 +167,7 @@ class WeatherFragment : Fragment() {
     ///Тут ?
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun getCurrentWeather() {
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             val response = try {
 
                 cityCoordinate.let {
@@ -195,9 +195,9 @@ class WeatherFragment : Fragment() {
                         val data = response.body()
                         Log.d("@@@","Данные с сервера погоды - ${data}")
 
-//                        binding.currentTemperature.text = "Текущая температура воздуха - " + "${data?.main?.temp}\u00B0"
-//
-//                        binding.currentWeather.text = data?.weather?.get(0)?.main.toString()
+                        binding.currentTemperature.text = "Текущая температура воздуха: " + "${data?.main?.temp}\u00B0"
+
+                        binding.currentWeather.text = data?.weather?.get(0)?.main.toString()
 
                     }
                 }
