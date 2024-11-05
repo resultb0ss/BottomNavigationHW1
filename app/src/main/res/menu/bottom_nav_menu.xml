@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mainFragment"
+        android:title="@string/menu_name_home"
+        android:icon="@drawable/ic_home_24"/>
+
+    <item
+        android:id="@+id/profileFragment"
+        android:title="@string/menu_name_profile"
+        android:icon="@drawable/ic_person_24"/>
+
+    <item
+        android:id="@+id/notesFragment"
+        android:title="@string/menu_name_notes"
+        android:icon="@drawable/ic_note_24"/>
+    <item
+        android:id="@+id/weatherFragment"
+        android:title="@string/menu_name_weather"
+        android:icon="@drawable/ic_weather_24">
+
+    </item>
+</menu>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">BottomNavigationHW1</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_name_home">Главная</string>
+    <string name="menu_name_notes">Заметки</string>
+    <string name="menu_name_profile">Профиль</string>
+    <string name="menu_name_weather">Погода</string>
+    <string name="api_key">d473fe549b6462058cfc7446beed7096</string>
+</resources>

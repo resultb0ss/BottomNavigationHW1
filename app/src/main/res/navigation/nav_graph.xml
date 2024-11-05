@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.bottomnavigationhw1.ui.home.MainFragment"
+        android:label="Главная"
+        tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="com.example.bottomnavigationhw1.ui.notes.NotesFragment"
+        android:label="Заметки"
+        tools:layout="@layout/fragment_notes" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.bottomnavigationhw1.ui.profile.ProfileFragment"
+        android:label="Профиль"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/weatherFragment"
+        android:name="com.example.bottomnavigationhw1.ui.weather.WeatherFragment"
+        android:label="Погода"
+        tools:layout="@layout/fragment_weather" />
+</navigation>
