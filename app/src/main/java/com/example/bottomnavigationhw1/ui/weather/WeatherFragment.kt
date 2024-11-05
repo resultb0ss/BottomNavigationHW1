@@ -162,10 +162,9 @@ class WeatherFragment : Fragment() {
         }
     }
 
-    fun getCurrentWeatherTwo(){
-        Log.d("@@@", "Функция вызывается")
-    }
 
+
+    ///Тут ?
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun getCurrentWeather() {
         GlobalScope.launch(Dispatchers.IO) {
