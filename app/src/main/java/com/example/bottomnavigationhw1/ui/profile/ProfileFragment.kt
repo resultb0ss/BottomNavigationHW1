@@ -38,15 +38,18 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.firstNameTextView.setOnClickListener {
-            getDialogFirstName(binding.firstNameTextView)
+            getDialog(it as TextView, viewModel.person.firstName)
+            { newValue -> viewModel.person.firstName = newValue}
         }
 
         binding.lastNameTextView.setOnClickListener {
-            getDialogLastName(binding.lastNameTextView)
+            getDialog(it as TextView, viewModel.person.lastName)
+            { newValue -> viewModel.person.lastName = newValue}
         }
 
         binding.phoneNumberTextView.setOnClickListener {
-            getDialogPhone(binding.phoneNumberTextView)
+            getDialog(it as TextView, viewModel.person.phoneNumber)
+            { newValue -> viewModel.person.phoneNumber = newValue}
         }
 
     }
@@ -56,46 +59,9 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
-    private fun getDialogFirstName(view: TextView,){
 
-        val (dialog, editName: EditText) = DialogInit()
+    private fun getDialog(view: TextView,currentValue: String, updateField:(String) -> Unit){
 
-        dialog.setPositiveButton("Обновить") { _, _ ->
-            view.text = editName.text.toString()
-            viewModel.person.firstName = view.text.toString()
-
-        }
-        dialog.setNegativeButton("Отмена") { _, _ -> }
-        dialog.create().show()
-    }
-
-    private fun getDialogLastName(view: TextView,){
-
-        val (dialog, editName: EditText) = DialogInit()
-
-        dialog.setPositiveButton("Обновить") { _, _ ->
-            view.text = editName.text.toString()
-            viewModel.person.lastName = view.text.toString()
-
-        }
-        dialog.setNegativeButton("Отмена") { _, _ -> }
-        dialog.create().show()
-    }
-
-    private fun getDialogPhone(view: TextView,){
-
-        val (dialog, editName: EditText) = DialogInit()
-
-        dialog.setPositiveButton("Обновить") { _, _ ->
-            view.text = editName.text.toString()
-            viewModel.person.phoneNumber = view.text.toString()
-
-        }
-        dialog.setNegativeButton("Отмена") { _, _ -> }
-        dialog.create().show()
-    }
-
-    private fun DialogInit(): Pair<AlertDialog.Builder, EditText> {
         val dialog = AlertDialog.Builder(requireContext())
         val inflater = requireActivity().layoutInflater
         val dialogView = inflater.inflate(R.layout.update_note, null)
@@ -104,7 +70,15 @@ class ProfileFragment : Fragment() {
 
         dialog.setTitle("Обновить запись")
         dialog.setMessage("Введите данные ниже")
-        return Pair(dialog, editName)
+
+        dialog.setPositiveButton("Обновить") { _, _ ->
+            val newValue = editName.text.toString()
+            view.text = newValue
+            updateField(newValue)
+
+        }
+        dialog.setNegativeButton("Отмена") { _, _ -> }
+        dialog.create().show()
     }
 
 
